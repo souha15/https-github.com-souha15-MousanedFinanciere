@@ -1,0 +1,266 @@
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light main-nav">
+  <a class="navbar-brand" href="#"><img src="assets/images/logo000.png" alt=""></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/home']">الرئيسية <span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/news-list-viewer']">المركز الإعلامي</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/main-tasks']">ادارة المهام</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" *ngIf="!testrole" [routerLink]="['/mailing']">الإتصالات الإدارية</a>
+        <a class="nav-link" *ngIf="testrole" [routerLink]="['/menutr']">الإتصالات الإدارية</a>
+      </li>
+      <li class="nav-item">
+
+        <a class="nav-link" [routerLink]="['/event-list']">إدارة الفعاليات</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/liste-dotation']"> إدارة العقارات</a>
+      </li>
+      <!--  <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/users-list']">الموظفين</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/main-finance-page']">المالية</a>
+      </li>
+      -->
+    </ul>
+    <div class="my-2 my-lg-0" *ngIf="userDetails">
+
+      <a *ngIf="testroledir" [routerLink]="['/alerts']" class="ml-2 alert-btn notification"><span class="badge" *ngIf="nbd!=0">{{nbd}}</span><i class="fa fa-bell fa-lg"></i></a>
+      <a *ngIf="testrole" [routerLink]="['/alerts']" class="ml-2 alert-btn notification"><span class="badge" *ngIf="nbr!=0">{{nbr}}</span><i class="fa fa-bell fa-lg"></i></a>
+      <a *ngIf="testroleadmin" [routerLink]="['/alerts']" class="ml-2 alert-btn notification"><span class="badge"></span><i class="fa fa-bell fa-lg"></i></a>
+      <a href="#" class="msg-btn"><i class="fa fa-envelope fa-lg"></i></a>
+      <button class="btn  user-btn my-2 my-sm-0 mx-3"> مرحبا {{userDetails.fullName}}</button>
+    </div>
+    <div class="dropdown d-inline-block">
+      <a href="#" class="user-img dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <!---<img  src="/uploads/{{userDetails.photo}}" alt="user-image">-->
+        <img src="assets/images/avatar.png" alt="user-image" *ngIf="sexe == 'ذكر'">
+        <img src="assets/images/logowomen.jpg" alt="user-image" *ngIf="sexe == 'أنثى'">
+      </a>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" [routerLink]="['/user-info']">بيانات الموظف</a>
+        <!-- <a class="dropdown-item" [routerLink]="['/user-change-pasword']">تغيير كلمة  المرور</a>-->
+        <a class="dropdown-item" (click)="onLogout()" href="">خروج</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- Page Content -->
+<div class="content">
+  <div class="row">
+    <div class="col-md-3 col-sm-4">
+      <app-side-menu></app-side-menu>
+    </div>
+
+    <div class="col-md-9 col-sm-8">
+      <app-navmenurequests></app-navmenurequests>
+      <header>
+        <h3 class="task-head"> طلبات  صرف الشيك</h3>
+      </header>
+      <div class="leave-request-list">
+        <div class="table-responsive">
+          <table class="table table-bordered text-center table-striped">
+            <thead class="thead-primary">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">رقم الطلب</th>
+                <th scope="col">مقدم الطلب</th>
+                <th scope="col">موضوع الطلب</th>
+                <th scope="col">المبلغ</th>
+                <th scope="col">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let cg of dem6 |  orderBy: key : reverse | filter:filter| paginate: { itemsPerPage: count, currentPage: p };let i = index">
+                <th (click)="populateForm(cg)" data-toggle="modal" data-target="#myModal1">{{(p-1) * count + i + 1}}</th>
+                <td (click)="populateForm(cg)" data-toggle="modal" data-target="#myModal1">{{cg.numdem}}</td>
+                <td (click)="populateForm(cg)" data-toggle="modal" data-target="#myModal1">{{cg.demandeur}}</td>
+                <td (click)="populateForm(cg)" data-toggle="modal" data-target="#myModal1">{{cg.sujet}}</td>
+                <td (click)="populateForm(cg)" data-toggle="modal" data-target="#myModal1">{{cg.prixnb}}</td>
+
+
+                <td data-toggle="modal" data-target="#myModal2" (click)="populateForm(cg)"
+                    [ngClass]="{
+
+  'success': cg.etatgeneral === 'معتمدة',
+  'denied': cg.etatgeneral === 'مرفوضة',
+  'accord': cg.etatgeneral === 'موافقة',
+  'worke': cg.etatgeneral === 'تحت الإجراء',
+  'wait': cg.etatgeneral === 'في الإنتظار',
+  'towork': cg.etatgeneral === 'للإنجاز'
+}">
+                  {{cg.etatgeneral}}
+                </td>
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+            <pagination-controls (pageChange)="p = $event" previousLabel="السابق"
+                                 nextLabel="التالي"></pagination-controls>
+          </ul>
+        </nav>
+
+      </div>
+    </div><!-- End col-9 -->
+  </div>
+
+</div>
+<!-- Footer -->
+<footer class="text-center">
+ <p>كل الحقوق محفوظة لمؤسسة مواهب الخليج  <img src="assets/images/logo000.png" style="width:40px;height:40px;"> </p>
+</footer>
+
+
+<div id="myModal1" class="popup-page" role="dialog" style="direction:ltr;">
+  <div class="">
+
+    <div class="popup-content">
+
+
+      <button type="button" class="close-popup" data-dismiss="modal">&times;</button>
+
+
+      <div class="page-wrapper">
+        <h3 class="popup-head"> طلب  صرف الشيك</h3>
+        <div class="modal-body" style="direction:rtl; text-align:right;">
+          <div class="task-form form-row stop-form">
+            <form class="task-form form-row service-form">
+
+              <div class="col-md-4">
+                <label for="permision-hours">القسم</label>
+                {{per.classe}}
+
+              </div>
+
+              <div class="col-md-4">
+                <label for="permision-hours">تاريخ الادخال</label>
+                {{per.dateEntre}}
+
+              </div>
+
+              <div class="col-md-4">
+                <label for="permision-hours">رقم الطلب</label>
+                {{per.numdem}}
+
+              </div>
+
+
+              <div class="col-md-4">
+                <label for="permision-hours">مقدم الطلب</label>
+                {{per.demandeur}}
+
+              </div>
+              <div class="col-md-4">
+                <label for="permision-hours">موضوع الطلب</label>
+                {{per.description}}
+
+              </div>
+
+
+              <div class="col-md-4">
+                <label for="permision-hours">المبلغ رقما</label>
+                {{per.prixnb}}
+
+              </div>
+
+
+              <div class="col-md-4">
+                <label for="permision-hours"> المبلغ كتابة</label>
+                {{per.prixlettre}}
+
+              </div>
+
+              <div class="col-md-4">
+                <label for="permision-hours">الحالة</label>
+                {{per.etatgeneral}}
+
+              </div>
+              <div class="col-md-12">
+                <div class="table-responsive new-table2">
+                  <table class="table table-bordered text-center table-striped">
+                    <thead class="thead-primary">
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">البيان</th>
+                        <th scope="col">المبلغ</th>
+                        <th scope="col">التفاصيل</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let dp of arlis ; let i = index">
+                        <th scope="row">{{i+1}}</th>
+                        <td>{{dp.article}}</td>
+                        <td>{{dp.prix}}</td>
+                        <td>{{dp.detail}}</td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="myModal2" class="modal fade bd-example-modal-lg" role="dialog" style="direction:ltr">
+  <div class="modal-dialog modal-lg">
+
+
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        <h4 class="modal-title">تعديل حالة صرف الشيك</h4>
+
+      </div>
+      <div class="modal-body" style="direction:rtl; text-align:right">
+        <form class="task-form form-row">
+          <label for="user"><span><i class="fa fa-check"></i></span>حالة صرف الشيك</label>
+          <select id="user" class="" (change)="etattest($event)">
+            <option [ngValue]="undefined" selected disabled>-حالة صرف الشيك-</option>
+            <option value="موافق">موافق</option>
+            <option value="رفض">رفض</option>
+
+          </select>
+
+          <div class="save">
+            <button type="submit" class="btn btn-success" (click)="accept()"><span><i class="fa fa-edit"></i></span>تحديث</button>
+
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
